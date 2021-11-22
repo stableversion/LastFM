@@ -11,7 +11,8 @@ fn main() {
     get(&user, &page);
 }
 
-// make a request to lastFM api and return the respons
+// make a request to lastFM api and return the response
+// then format artist, name and date into a single txt file
 
 fn get(user: &str, page: &str){
     let url = format!("http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user={}&api_key=b25b959554ed76058ac220b7b2e0a026&limit=300&page={}&format=json", user, page);
@@ -53,24 +54,3 @@ struct Response {
 struct RecentTracks {
     track: Vec<Track>,
 }
-
-
-//fn get(user: &str, page: &str) -> Result<(), Error> {
-//    let url = format!("http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user={}&api_key=6f77c6b8b6d0e6f8d6e9f6f9f6f9f6f&page={}&limit=200&format=json", user, page);
-//    let res = reqwest::blocking::get(&url).unwrap();
-//
-//    let json: serde_json::Value = serde_json::from_str(&res.text();
-//
-//    let tracks = json["recenttracks"]["track"];
-//    for track in tracks.as_array().unwrap() {
-//        let artist = track["artist"]["#text"].as_str().unwrap();
-//        let name = track["name"].as_str().unwrap();
-//        let album = track["album"]["#text"].as_str().unwrap();
-//        let url = track["url"].as_str().unwrap();
-//        let nowplaying = track["@attr"]["nowplaying"].as_str().unwrap();
-//        if nowplaying == "true" {
-//            println!("{} - {} - {} - {}", artist, name, album, url);
-//        }
-//    }
-//    Ok(())
-//}
