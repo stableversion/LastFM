@@ -16,7 +16,8 @@ e.x Yakui The Maid - Calamity : 20 Nov 2021, 03:19
 
 
 ## Todo
-- Handle multiple pages
+- ~~Handle multiple pages~~
 - Output to other formats like CSV, etc.
 - Specify output directory
-- Command line options
+- ~~Command line options~~
+- Error Handling
