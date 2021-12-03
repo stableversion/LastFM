@@ -30,7 +30,7 @@ fn get(user: &str, page: &str) -> String {
 
 // Parses the json response and formates it to readable text
 
-fn format_txt(text: String) -> String {
+fn format_txt(text: &str) -> String {
     let json: Response = serde_json::from_str(&text).unwrap();
     let tracks: Vec<Track> = json.recenttracks.track;
     let mut tracks_str = String::new();
@@ -43,7 +43,7 @@ fn format_txt(text: String) -> String {
 
 // Gets page number from json response
 
-fn get_page_number(text: String) -> String {
+fn get_page_number(text: &str) -> String {
     let json: Response = serde_json::from_str(&text).unwrap();
     let page_number = json.recenttracks.attr.totalPages;
     return page_number.to_string();
@@ -51,7 +51,7 @@ fn get_page_number(text: String) -> String {
 
 // Saves the string to txt file
 
-fn save_to_file(tracks_str: String, user: &str) {           
+fn save_to_file(tracks_str: &str, user: &str) {           
     let file_name = format!("{}_tracks.txt", user);
     let _file = fs::File::create(&file_name).unwrap();
     let mut file = fs::OpenOptions::new()
