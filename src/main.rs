@@ -65,17 +65,17 @@ fn save_to_file(tracks_str: &str, user: &str) {
 // Combines all functions
 
 fn get_all(user: &str) {
-    let page_number = get_page_number(get(user, "1"));
+    let page_number = get_page_number(&get(user, "1"));
     let mut page_number_str = String::new();
     let mut total_str = String::new();
     for page in 1..(page_number.parse::<i32>().unwrap()) + 1{
         let page_str = format!("{}", page);
         page_number_str.push_str(&page_str);
         println!("Scraping page {}", page_str);
-        let get_str = format_txt(get(user, &page_str));
+        let get_str = format_txt(&get(user, &page_str));
         total_str.push_str(&get_str);
     };
-    save_to_file(total_str, user);
+    save_to_file(&total_str, user);
     println!("Done");
 }
 
