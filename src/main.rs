@@ -4,28 +4,39 @@ use std::io::Write;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use structopt::StructOpt;
+use std::process;
 
 #[derive(StructOpt, Debug)]
 #[structopt(name = "LastFM")]
 struct Opt {
     #[structopt(short = "u", long = "user", help = "LastFM username")]
     user: String,
+    #[structopt(short = "o", long = "output", help = "Filepath for output", default_value = "")]
+    output: String,
 }
 
 
 fn main() {
     let user = Opt::from_args().user;
-    get_all(&user);
+    let path = Opt::from_args().output;
+
+    get_all(&user, &path);
 
 }
 
-// LastFM API request
+// get LastFM json
 
-fn get(user: &str, page: &str) -> String {
+ fn get(user: &str, page: &str) -> String{    
     let url = format!("http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user={}&api_key=b25b959554ed76058ac220b7b2e0a026&limit=300&page={}&format=json", user, page);
     let response = reqwest::blocking::get(&url).unwrap();
-    let text = response.text().unwrap();
-    return text;
+    if response.status().is_success() {
+        let text = response.text().unwrap();
+        return text;
+    } else {
+        println!("Username not found. Status: {:?}", response.status());
+        process::exit(1);
+    }
+    
 }
 
 // Parses the json response and formates it to readable text
@@ -51,8 +62,8 @@ fn get_page_number(text: &str) -> String {
 
 // Saves the string to txt file
 
-fn save_to_file(tracks_str: &str, user: &str) {           
-    let file_name = format!("{}_tracks.txt", user);
+fn save_to_file(tracks_str: &str, user: &str, total_file_name: &str) {           
+    let file_name = format!("{}{}_tracks.txt", total_file_name, user);    
     let _file = fs::File::create(&file_name).unwrap();
     let mut file = fs::OpenOptions::new()
         .write(true)
@@ -64,7 +75,7 @@ fn save_to_file(tracks_str: &str, user: &str) {
 
 // Combines all functions
 
-fn get_all(user: &str) {
+fn get_all(user: &str, filep: &str) {
     let page_number = get_page_number(&get(user, "1"));
     let mut page_number_str = String::new();
     let mut total_str = String::new();
@@ -75,7 +86,7 @@ fn get_all(user: &str) {
         let get_str = format_txt(&get(user, &page_str));
         total_str.push_str(&get_str);
     };
-    save_to_file(&total_str, user);
+    save_to_file(&total_str, user, filep);
     println!("Done");
 }
 
