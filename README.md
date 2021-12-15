@@ -1,5 +1,5 @@
 # LastFM
-Simple and fast LastFM profile scraper, written in rust (WIP)
+Simple LastFM profile scraper, written in rust (WIP)
 
 ## Why
 - Why not?
