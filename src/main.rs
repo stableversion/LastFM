@@ -13,14 +13,25 @@ struct Opt {
     user: String,
     #[structopt(short = "o", long = "output", help = "Filepath for output", default_value = "")]
     output: String,
+    #[structopt(short = "t", long = "type", help = "CSV/Txt", default_value = "txt")]
+    csv: String,
 }
 
 
 fn main() {
     let user = Opt::from_args().user;
-    let path = Opt::from_args().output;
-
-    get_all(&user, &path);
+    let path = Opt::from_args().output; 
+    let file_input = Opt::from_args().csv; 
+    
+    if file_input.to_lowercase().eq("txt") {
+        get_all_txt(&user, &path);
+    } else if file_input.to_lowercase().eq("csv") {
+        let tempget = get(&user, "1");
+        save_to_csv(&user, &tempget, &path)
+    } else {
+        println!("Please use either txt or csv as file type");
+        process::exit(1);
+    }
 
 }
 
@@ -39,7 +50,7 @@ fn main() {
     
 }
 
-// Parses the json response and formates it to readable text
+// Parses the json response and formats it to readable text
 
 fn format_txt(text: &str) -> String {
     let json: Response = serde_json::from_str(&text).unwrap();
@@ -75,7 +86,7 @@ fn save_to_file(tracks_str: &str, user: &str, total_file_name: &str) {
 
 // Combines all functions
 
-fn get_all(user: &str, filep: &str) {
+fn get_all_txt(user: &str, filep: &str) {
     let page_number = get_page_number(&get(user, "1"));
     let mut page_number_str = String::new();
     let mut total_str = String::new();
@@ -89,6 +100,24 @@ fn get_all(user: &str, filep: &str) {
     save_to_file(&total_str, user, filep);
     println!("Done");
 }
+
+fn save_to_csv(user: &str, text: &str, path: &str) {
+    let json: Response = serde_json::from_str(&text).unwrap();
+    let tracks: Vec<Track> = json.recenttracks.track;
+
+    let mut wtr = csv::Writer::from_path(format!("{}{}_tracks.csv", path, user)).unwrap();
+    wtr.write_record(&["Artist", "Track", "Date"]).unwrap();
+    
+    for track in tracks {
+        let Artist = format!("{}", track.artist["#text"]);
+        let Track = format!("{}", track.name);
+        let Date = format!("{}", track.date["#text"]);
+        wtr.write_record(&[Artist, Track, Date]);
+    }
+    wtr.flush();
+    println!("Done");
+}
+
 
 // structure for a track
 #[derive(Deserialize)]
