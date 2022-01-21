@@ -14,6 +14,29 @@ Simple LastFM profile scraper, written in rust (WIP)
 
 e.x Yakui The Maid - Calamity : 20 Nov 2021, 03:19
 
+## Building 
+
+```
+git clone https://github.com/stableversion/LastFM
+```
+```
+cd LastFM
+```
+```
+cargo build --release
+```
+```
+cd target/release
+```
+```
+./lasfm_scrape
+```
+or windows (from command line)
+```
+lasfm_scrape.exe
+```
+
+
 ## Usage
 
 ### Linux
